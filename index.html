@@ -17,7 +17,7 @@
       </p>
       <div class="row">
         <!-- form -->
-        <div class="col">
+        <div id="kolom1">
           <form class="row g-3">
             <div class="col-sm-6">
               <label for="invoervoornaam" class="form-label">Voornaam</label>
@@ -193,19 +193,19 @@
           </button>
         </div>
         <!-- errors -->
-        <div class="mes" id="messages">
+        <div id="kolom2">
           <div class="alert alert-danger" role="alert">
             <h4>Yikes, errors..</h4>
             <p></p>
           </div>
-          <div class="alert alert-success d-none" role="alert">
+          <!-- <div class="alert alert-success d-none" role="alert">
             <h4>Goed gedaan!</h4>
             <p>Aww yeah, je werd geregistreed.</p>
           </div>
           <div class="alert alert-primary d-none" role="alert">
             <h4>Betalingswijze</h4>
             <p>Je betalingswijze is</p>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -230,7 +230,8 @@
       const divError = document.querySelector(".alert-danger");
       const divBetaling = document.querySelector(".alert-primary");
 
-      const divMessage = document.querySelector("#messages").innerHTML;
+      const divForms = document.querySelector("#kolom1");
+      const divMessage = document.querySelector("#kolom2");
 
       let errorArray = new Array();
       //declaratie arrow functie
@@ -247,13 +248,13 @@
         checkEmptyField(provincie, "Provincie is vereist.");
         checkEmptyField(postcode, "Het veld postcode is vereist.");
         
-        console.log(errorArray)
-        
+             
 
         //controleer of array met errors gevuld is
         if (errorArray.length > 0) {
-          //divMessage.classList.add("col-4")
-          //divMessage.appendChild()
+          divForms.className = 'col-8'
+          divMessage.className = 'col-4'
+          // gevonden op https://stackoverflow.com/questions/45571801/classname-is-not-a-function classlist.add() zou niet werken op ie9 en lager
           let paragraaf = document.createElement("p")
           paragraaf.id = "errors"
           divError.appendChild(paragraaf);
