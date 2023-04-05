@@ -212,19 +212,9 @@
 
     <script>
       //velden declaraties
-      const voornaam = document.querySelector("#invoervoornaam");
-      const naam = document.querySelector("#invoerNaam");
-      const gebruikersnaam = document.querySelector("#gebruikersnaam");
-      const email = document.querySelector("#inputEmail4");
-      const wachtwoord = document.querySelector("#wachtwoord");
-      const herhaalwachtwoord = document.querySelector("#herhaalwachtwoord");
-      const adres = document.querySelector("#inputAddress");
-      const land = document.querySelector("#invoerland");
-      const provincie = document.querySelector("#invoerprovincie");
-      const postcode = document.querySelector("#invoerpostcode");
 
       //knop declaratie
-      const button = document.querySelector("#buttonwand");     
+      const button = document.querySelector("#buttonwand");
 
       const divForms = document.querySelector("#kolom1");
       const divMessage = document.querySelector("#kolom2");
@@ -233,13 +223,7 @@
       //declaratie arrow functie
       const validateForm = () => {
         resizeDivs();
-        ClearAlerts();
-
-        //controleer invoer
-
-                  
-           
-
+        clearAlerts();
         checkEmptyFields();
 
         //controleer of array met errors gevuld is
@@ -256,14 +240,10 @@
 
             paragraaf.appendChild(foutboodschap);
             paragraaf.appendChild(volgendelijn);
-            
-          });          
-          
+          });
         } else {
-
           let succesDiv = createAlert(divMessage, "success");
           let primaryDiv = createAlert(divMessage, "primary");
-          
         }
       };
 
@@ -281,6 +261,16 @@
         }
       }
       function checkEmptyFields() {
+        const voornaam = document.querySelector("#invoervoornaam");
+        const naam = document.querySelector("#invoerNaam");
+        const gebruikersnaam = document.querySelector("#gebruikersnaam");
+        const email = document.querySelector("#inputEmail4");
+        const wachtwoord = document.querySelector("#wachtwoord");
+        const herhaalwachtwoord = document.querySelector("#herhaalwachtwoord");
+        const adres = document.querySelector("#inputAddress");
+        const land = document.querySelector("#invoerland");
+        const provincie = document.querySelector("#invoerprovincie");
+        const postcode = document.querySelector("#invoerpostcode");
         checkEmptyField(voornaam, "het veld voornaam is vereist.");
         checkEmptyField(naam, "Het veld naam is vereist.");
         checkEmptyField(gebruikersnaam, "Het veld gebruikersnaam is vereist.");
@@ -303,7 +293,6 @@
       }
 
       function createAlert(ouder, alertType) {
-
         let newDiv = document.createElement("div");
         let titel;
         newDiv.className = "alert alert-" + alertType;
@@ -324,27 +313,22 @@
         }
 
         let hoofding = document.createElement("h4");
-        let titelNode = document.createTextNode(titel)
-        
+        let titelNode = document.createTextNode(titel);
+
         newDiv.appendChild(hoofding);
         ouder.appendChild(newDiv);
         hoofding.appendChild(titelNode);
-        
 
         return newDiv;
       }
 
-      function ClearAlerts(){
+      function clearAlerts() {
         divMessage.innerHTML = "";
-        
-        while(errorArray.length > 0){
+
+        while (errorArray.length > 0) {
           errorArray.pop();
         }
-
       }
-        
-      
-      
     </script>
   </body>
 </html>
