@@ -194,10 +194,10 @@
         </div>
         <!-- errors -->
         <div id="kolom2">
-          <div class="alert alert-danger" role="alert">
+          <!-- <div class="alert alert-danger" role="alert">
             <h4>Yikes, errors..</h4>
             <p></p>
-          </div>
+          </div> -->
           <!-- <div class="alert alert-success d-none" role="alert">
             <h4>Goed gedaan!</h4>
             <p>Aww yeah, je werd geregistreed.</p>
@@ -222,13 +222,9 @@
       const land = document.querySelector("#invoerland");
       const provincie = document.querySelector("#invoerprovincie");
       const postcode = document.querySelector("#invoerpostcode");
-      
-      //knop declaratie
-      const button = document.querySelector("#buttonwand");
 
-      const divSucces = document.querySelector(".alert-succes");
-      const divError = document.querySelector(".alert-danger");
-      const divBetaling = document.querySelector(".alert-primary");
+      //knop declaratie
+      const button = document.querySelector("#buttonwand");     
 
       const divForms = document.querySelector("#kolom1");
       const divMessage = document.querySelector("#kolom2");
@@ -236,43 +232,38 @@
       let errorArray = new Array();
       //declaratie arrow functie
       const validateForm = () => {
+        resizeDivs();
+        ClearAlerts();
+
         //controleer invoer
-        checkEmptyField(voornaam, "het veld voornaam is vereist.");
-        checkEmptyField(naam, "Het veld naam is vereist.");
-        checkEmptyField(gebruikersnaam, "Het veld gebruikersnaam is vereist.");
-        checkEmptyField(email, "Het veld email is vereist.");
-        checkEmptyField(wachtwoord, "Het veld wachtwoord is vereist.");
-        checkEmptyField(herhaalwachtwoord, "Het veld herhaal wachtwoord is vereist.");
-        checkEmptyField(adres, "Adres is vereist.");
-        checkEmptyField(land, "Land is vereist.");
-        checkEmptyField(provincie, "Provincie is vereist.");
-        checkEmptyField(postcode, "Het veld postcode is vereist.");
-        
-             
+
+                  
+           
+
+        checkEmptyFields();
 
         //controleer of array met errors gevuld is
         if (errorArray.length > 0) {
-          divForms.className = 'col-8'
-          divMessage.className = 'col-4'
-          // gevonden op https://stackoverflow.com/questions/45571801/classname-is-not-a-function classlist.add() zou niet werken op ie9 en lager
-          let paragraaf = document.createElement("p")
-          paragraaf.id = "errors"
-          divError.appendChild(paragraaf);
+          let errorDiv = createAlert(divMessage, "danger");
 
-          errorArray.forEach(element => {
-            let foutboodschap = document.createTextNode(element)
-            let volgendelijn = document.createElement("br")
+          let paragraaf = document.createElement("p");
+          paragraaf.id = "errors";
+          errorDiv.appendChild(paragraaf);
 
+          errorArray.forEach((element) => {
+            let foutboodschap = document.createTextNode(element);
+            let volgendelijn = document.createElement("br");
 
-            paragraaf.appendChild(foutboodschap)
-            paragraaf.appendChild(volgendelijn)
-          });
+            paragraaf.appendChild(foutboodschap);
+            paragraaf.appendChild(volgendelijn);
+            
+          });          
+          
+        } else {
 
-         
-
-          // while(errorArray.length > 0){
-          //   errorArray.pop();
-          // }
+          let succesDiv = createAlert(divMessage, "success");
+          let primaryDiv = createAlert(divMessage, "primary");
+          
         }
       };
 
@@ -280,18 +271,80 @@
       button.addEventListener("click", validateForm, false);
 
       //normale functies
-      function checkEmptyField(veld, melding){
-        if (veld.value == "") {
-          //alert("Naam is leeg");
+      function checkEmptyField(veld, melding) {
+        if (
+          veld.value == "" ||
+          veld.value == "Kies een land" ||
+          veld.value == "Kies een provincie"
+        ) {
           errorArray.push(melding);
         }
-        
-        // if (veld.value == "" || veld.value == "Kies een land" || veld.value == "Kies een provincie") {
-        //   //alert("Naam is leeg");
-        //   errorArray.push(melding);
-        // }
-        
       }
+      function checkEmptyFields() {
+        checkEmptyField(voornaam, "het veld voornaam is vereist.");
+        checkEmptyField(naam, "Het veld naam is vereist.");
+        checkEmptyField(gebruikersnaam, "Het veld gebruikersnaam is vereist.");
+        checkEmptyField(email, "Het veld email is vereist.");
+        checkEmptyField(wachtwoord, "Het veld wachtwoord is vereist.");
+        checkEmptyField(
+          herhaalwachtwoord,
+          "Het veld herhaal wachtwoord is vereist."
+        );
+        checkEmptyField(adres, "Adres is vereist.");
+        checkEmptyField(land, "Land is vereist.");
+        checkEmptyField(provincie, "Provincie is vereist.");
+        checkEmptyField(postcode, "Het veld postcode is vereist.");
+      }
+
+      function resizeDivs() {
+        divForms.className = "col-8";
+        divMessage.className = "col-4";
+        // gevonden op https://stackoverflow.com/questions/45571801/classname-is-not-a-function classlist.add() zou niet werken op ie9 en lager
+      }
+
+      function createAlert(ouder, alertType) {
+
+        let newDiv = document.createElement("div");
+        let titel;
+        newDiv.className = "alert alert-" + alertType;
+        newDiv.role = "alert";
+
+        switch (alertType) {
+          case "danger":
+            titel = "Yikes, errors...";
+            break;
+          case "success":
+            titel = "Goed gedaan!";
+            break;
+          case "primary":
+            titel = "Betalingswijze";
+            break;
+          default:
+            alert("geen geldige waarde voor alert type");
+        }
+
+        let hoofding = document.createElement("h4");
+        let titelNode = document.createTextNode(titel)
+        
+        newDiv.appendChild(hoofding);
+        ouder.appendChild(newDiv);
+        hoofding.appendChild(titelNode);
+        
+
+        return newDiv;
+      }
+
+      function ClearAlerts(){
+        divMessage.innerHTML = "";
+        
+        while(errorArray.length > 0){
+          errorArray.pop();
+        }
+
+      }
+        
+      
+      
     </script>
   </body>
 </html>
