@@ -174,9 +174,9 @@
                   class="form-check-input"
                   type="radio"
                   name="flexRadioDefault"
-                  id="flexRadioDefault2"
+                  id="paypal"
                 />
-                <label class="form-check-label" for="flexRadioDefault2">
+                <label class="form-check-label" for="paypal">
                   PayPal
                 </label>
               </div>
@@ -194,18 +194,7 @@
         </div>
         <!-- errors -->
         <div id="kolom2">
-          <!-- <div class="alert alert-danger" role="alert">
-            <h4>Yikes, errors..</h4>
-            <p></p>
-          </div> -->
-          <!-- <div class="alert alert-success d-none" role="alert">
-            <h4>Goed gedaan!</h4>
-            <p>Aww yeah, je werd geregistreed.</p>
-          </div>
-          <div class="alert alert-primary d-none" role="alert">
-            <h4>Betalingswijze</h4>
-            <p>Je betalingswijze is</p>
-          </div> -->
+          
         </div>
       </div>
     </div>
@@ -222,7 +211,7 @@
       const validateForm = () => {
         resizeDivs();
         clearAlerts();
-        checkEmptyFields();
+        checkFields();
 
         //controleer of array met errors gevuld is
         if (errorArray.length > 0) {
@@ -258,7 +247,7 @@
           errorArray.push(melding);
         }
       }
-      function checkEmptyFields() {
+      function checkFields() {
         const voornaam = document.querySelector("#invoervoornaam");
         const naam = document.querySelector("#invoerNaam");
         const gebruikersnaam = document.querySelector("#gebruikersnaam");
@@ -282,6 +271,7 @@
         checkEmptyField(land, "Land is vereist.");
         checkEmptyField(provincie, "Provincie is vereist.");
         checkPc(postcode);
+        checkVoorwaarden();
       }
 
       function resizeDivs() {
@@ -293,30 +283,59 @@
       function createAlert(ouder, alertType) {
         let newDiv = document.createElement("div");
         let hoofding = document.createElement("h4");
-        let titel;
+        let titel, titelNode, paragraaf, pcontent;
         newDiv.className = "alert alert-" + alertType;
         newDiv.role = "alert";
 
         switch (alertType) {
           case "danger":
-            titel = "Yikes, errors...";
+            titelNode = document.createTextNode("Yikes, errors...");
+            newDiv.appendChild(hoofding);
+            ouder.appendChild(newDiv);
+            hoofding.appendChild(titelNode);
             break;
           case "success":
-            titel = "Goed gedaan!";
+            titelNode = document.createTextNode("Goed gedaan!");
+            paragraaf = document.createElement("p");
+            pcontent = document.createTextNode("Aww yeah, je werd geregistreerd.")
+            newDiv.appendChild(hoofding);
+            newDiv.appendChild(paragraaf);
+            ouder.appendChild(newDiv);
+            hoofding.appendChild(titelNode);      
+            paragraaf.appendChild(pcontent);
             break;
           case "primary":
-            titel = "Betalingswijze";
+            titelNode = document.createTextNode("Betalingswijze");
+            paragraaf = document.createElement("p");
+            pcontent = document.createTextNode("Je betalingswijze is " + checkRadio())
+            newDiv.appendChild(hoofding);
+            newDiv.appendChild(paragraaf);
+            ouder.appendChild(newDiv);
+            hoofding.appendChild(titelNode);      
+            paragraaf.appendChild(pcontent);
             break;
           default:
             alert("geen geldige waarde voor alert type");
         }
 
-        
-        let titelNode = document.createTextNode(titel);
+        // titelNode = document.createTextNode(titel);
+        // newDiv.appendChild(hoofding);
+        // ouder.appendChild(newDiv);
+        // hoofding.appendChild(titelNode);
 
-        newDiv.appendChild(hoofding);
-        ouder.appendChild(newDiv);
-        hoofding.appendChild(titelNode);
+        // switch (alertType) {
+        //   case "danger":
+        //     titel = "Yikes, errors...";
+        //     break;
+        //   case "success":
+        //     titel = "Goed gedaan!";
+        //     break;
+        //   case "primary":
+        //     titel = "Betalingswijze";
+        //     break;
+        //   default:
+        //     alert("geen geldige waarde voor alert type");
+        // }
 
         return newDiv;
       }
@@ -328,15 +347,42 @@
           errorArray.pop();
         }
       }
-      function checkPc(veld){
-        if (veld.value == "" ) {
-          errorArray.push("Het veld postcode is vereist.");
-        }
-        else if(veld.value > 10000 || veld.value < 1000 ){
-          errorArray.push("De waarde van postcode moet tussen 1000 en 9999 liggen");
+      function checkPc(veld) {
+        checkEmptyField(veld, "Het veld postcode is vereist.");
+
+        if (veld.value > 10000 || veld.value < 1000) {
+          errorArray.push(
+            "De waarde van postcode moet tussen 1000 en 9999 liggen"
+          );
         }
       }
+      function checkRadio(){
+        let bankingapp = document.getElementById("bankingapp");
+        let overschrijving = document.getElementById("overschrijving");
+        let visakaart = document.getElementById("visakaart");
+        let paypal = document.getElementById("paypal");
 
-    </script>
+        if(paypal.checked){
+          return "Paypal";
+        }
+        if(bankingapp.checked){
+          return "Banking app";
+        }
+        if(overschrijving.checked){
+          return "Overschrijving";
+        }
+        if(visakaart.checked){
+          return "Visakaart";
+        }
+
+        //bron https://www.tutorialspoint.com/how-to-check-whether-a-radio-button-is-selected-with-javascript
+      }
+      function checkVoorwaarden(){
+        let voorwaarden = document.querySelector("#algemenevwcheck")
+        
+        if(voorwaarden)
+        voorwaarden.checked ? true : errorArray.push("Je moet de algemene voorwaarden accepteren.")
+      }
+   </script>
   </body>
 </html>
