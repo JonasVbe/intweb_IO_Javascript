@@ -262,6 +262,9 @@
         checkEmptyField(naam, "Het veld naam is vereist.");
         checkEmptyField(gebruikersnaam, "Het veld gebruikersnaam is vereist.");
         checkEmptyField(email, "Het veld email is vereist.");
+        if(!validateEmail(email.value)){
+          errorArray.push("E-mailadres is niet correct.")
+        }
         checkEmptyField(wachtwoord, "Het veld wachtwoord is vereist.");
         checkEmptyField(
           herhaalwachtwoord,
@@ -273,13 +276,11 @@
         checkPc(postcode);
         checkVoorwaarden();
       }
-
       function resizeDivs() {
         divForms.className = "col-8";
         divMessage.className = "col-4";
         // gevonden op https://stackoverflow.com/questions/45571801/classname-is-not-a-function classlist.add() zou niet werken op ie9 en lager
       }
-
       function createAlert(ouder, alertType) {
         let newDiv = document.createElement("div");
         let hoofding = document.createElement("h4");
@@ -339,7 +340,6 @@
 
         return newDiv;
       }
-
       function clearAlerts() {
         divMessage.innerHTML = "";
 
@@ -382,6 +382,80 @@
         
         if(voorwaarden)
         voorwaarden.checked ? true : errorArray.push("Je moet de algemene voorwaarden accepteren.")
+      }
+      function validateEmail(email){
+        const alfanummeral = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        const allowedGebruikersnaam = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-"
+        const allowedDomeinnaam = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-"
+        let controle = 0; 
+        let ok = false;
+        
+        if(email.indexOf("@") == -1)
+            return false;
+        
+        let delen = email.split("@");
+        let gebruikersnaam = delen[0];
+        let domeinnaam = delen[1];
+
+        //controleert of gebruikersnaam minstens 1 character lang is.
+        if(gebruikersnaam.length == 0)
+          return false;
+        //controleert of gebruikersnaam begint met punt of koppelteken
+        if(gebruikersnaam.startsWith(".") || gebruikersnaam.startsWith("-"))
+          return false;
+        
+        //controleert of domeinnaam aanwezig is (niet gevraagd)
+        if(domeinnaam.length == 0)
+          return false;
+        //controleert of gebruikersnaam bestaat uit toegelaten karakters
+        for (let i = 0; i < gebruikersnaam.length; i++) {
+          for (let j = 0; j < allowedGebruikersnaam.length; j++) {
+            if(gebruikersnaam[i] == allowedGebruikersnaam[j]){
+              controle ++;
+            }             
+         
+          }        
+                    
+        }
+        if(gebruikersnaam.length != controle)
+          return false;
+        //controleert of domeinnaam bestaat uit toegelaten karakters
+        controle = 0;
+        for (let i = 0; i < domeinnaam.length; i++) {
+          for (let j = 0; j < allowedDomeinnaam.length; j++) {
+            if(domeinnaam[i] == allowedDomeinnaam[j]){
+              controle ++;
+            }             
+         
+          }        
+                    
+        }
+        if(domeinnaam.length != controle)
+          return false;
+        //controleert of domeinnaam begint met een alfanumeriek karakter
+        for (let index = 0; index < alfanummeral.length; index++) {
+            if(domeinnaam[0] == alfanummeral[index]){
+              ok = true;
+            }
+          
+        }        
+        if(!ok)
+          return false;
+        //controleert of er maar maximaal 1 punt aanwezig is in domeinnaam.
+        if(domeinnaam.includes(".")){
+          let puntSplits = domeinnaam.split(".");
+          let puntAantal = dotsplits.length - 1;
+
+          if(puntAantal > 1){
+            return false;
+          }
+
+        }     
+        //als alle controles gebeurd zijn en de code nog loopt geeft de functie true        
+        return true;
+        //bronnen
+        //https://www.w3schools.com/jsref/jsref_obj_string.asp
+        //https://www.aspsnippets.com/Articles/Email-validation-without-using-Regular-Expression-in-JavaScript.aspx
       }
    </script>
   </body>
