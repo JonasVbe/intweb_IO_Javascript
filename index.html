@@ -91,16 +91,24 @@
 
             <div class="col-md-6">
               <label for="invoerland" class="form-label">Land</label>
-              <select class="form-select custom-select" id="invoerland" autocomplete="off">
-                <option selected value="0">Kies een land</option>
-                <option value="1">België</option>
-                <option value="2">Nederland</option>
-                <option value="3">Luxemburg</option>
+              <select
+                class="form-select custom-select"
+                id="invoerland"
+                autocomplete="off"
+              >
+                <option selected>Kies een land</option>
+                <option>België</option>
+                <option>Nederland</option>
+                <option>Luxemburg</option>
               </select>
             </div>
             <div class="col-md-4">
               <label for="invoerprovincie" class="form-label">Provincie</label>
-              <select id="invoerprovincie" class="form-select" autocomplete="off">
+              <select
+                id="invoerprovincie"
+                class="form-select"
+                autocomplete="off"
+              >
                 <option selected>Kies een provincie</option>
                 <option id="defaultoption">Selecteer eerst een land</option>
               </select>
@@ -201,7 +209,6 @@
       //knop declaratie
       const button = document.querySelector("#buttonwand");
       const landInvoer = document.querySelector("#invoerland");
-
       const divForms = document.querySelector("#kolom1");
       const divMessage = document.querySelector("#kolom2");
 
@@ -233,18 +240,17 @@
         }
       };
 
-      //event listereners
+      //event listeners
       //buttonclick
       button.addEventListener("click", validateForm, false);
-      //land invoer
+      //land voor provincies met anonieme functie
       landInvoer.addEventListener(
         "change",
         () => {
-          let landselectedValue = landInvoer.options[landInvoer.selectedIndex].text
-          let provincieInvoer = document.querySelector("#invoerprovincie")
+          let landselectedValue =
+            landInvoer.options[landInvoer.selectedIndex].text;
+          let provincieInvoer = document.querySelector("#invoerprovincie");
           let provincies = maakProvincieArray(landselectedValue);
-          
-          console.log(provincies)
 
           //hier nog aanpassen clearen
           provincieInvoer.innerHTML = "";
@@ -280,8 +286,6 @@
         const naam = document.querySelector("#invoerNaam");
         const gebruikersnaam = document.querySelector("#gebruikersnaam");
         const email = document.querySelector("#inputEmail4");
-        const wachtwoord = document.querySelector("#wachtwoord");
-        const herhaalwachtwoord = document.querySelector("#herhaalwachtwoord");
         const adres = document.querySelector("#inputAddress");
         const land = document.querySelector("#invoerland");
         const provincie = document.querySelector("#invoerprovincie");
@@ -293,11 +297,7 @@
         if (!validateEmail(email.value)) {
           errorArray.push("E-mailadres is niet correct.");
         }
-        checkEmptyField(wachtwoord, "Het veld wachtwoord is vereist.");
-        checkEmptyField(
-          herhaalwachtwoord,
-          "Het veld herhaal wachtwoord is vereist."
-        );
+        checkPasswords();
         checkEmptyField(adres, "Adres is vereist.");
         checkEmptyField(land, "Land is vereist.");
         checkEmptyField(provincie, "Provincie is vereist.");
@@ -451,7 +451,7 @@
         //controleert of er maar maximaal 1 punt aanwezig is in domeinnaam.
         if (domeinnaam.includes(".")) {
           let puntSplits = domeinnaam.split(".");
-          let puntAantal = dotsplits.length - 1;
+          let puntAantal = puntSplits.length - 1;
 
           if (puntAantal > 1) {
             return false;
@@ -463,7 +463,26 @@
         //https://www.w3schools.com/jsref/jsref_obj_string.asp
         //https://www.aspsnippets.com/Articles/Email-validation-without-using-Regular-Expression-in-JavaScript.aspx
       }
+      function checkPasswords() {
+        const wachtwoord = document.querySelector("#wachtwoord");
+        const herhaalwachtwoord = document.querySelector("#herhaalwachtwoord");
 
+        checkEmptyField(wachtwoord, "Het veld wachtwoord is vereist.");
+        checkEmptyField(
+          herhaalwachtwoord,
+          "Het veld herhaal wachtwoord is vereist."
+        );
+
+        if (wachtwoord.value != "" && wachtwoord.value.length < 8)
+          errorArray.push("Wachtwoord moet minstens 8 karakters zijn.");
+
+        if (
+          herhaalwachtwoord.value != "" &&
+          wachtwoord.value != "" &&
+          wachtwoord.value != herhaalwachtwoord.value
+        )
+          errorArray.push("Je wachtwoorden komen niet overeen.");
+      }
       function maakProvincieArray(land) {
         let kantonsLux = [
           "Kies een provincie",
@@ -511,19 +530,19 @@
 
         let geenLand = ["Kies een provincie", "Selecteer eerst een land"];
 
-        if ((land == "België")) {
+        if (land == "België") {
           return provinciesBelg;
         }
 
-        if ((land == "Nederland")) {
+        if (land == "Nederland") {
           return provinciesNed;
         }
 
-        if ((land == "Luxemburg")) {
+        if (land == "Luxemburg") {
           return kantonsLux;
         }
 
-        if ((land == "Kies een land")) {
+        if (land == "Kies een land") {
           return geenLand;
         }
       }
