@@ -91,16 +91,18 @@
 
             <div class="col-md-6">
               <label for="invoerland" class="form-label">Land</label>
-              <select class="form-select custom-select" id="invoerland">
-                <option selected>Kies een land</option>
-                <option>...</option>
+              <select class="form-select custom-select" id="invoerland" autocomplete="off">
+                <option selected value="0">Kies een land</option>
+                <option value="1">België</option>
+                <option value="2">Nederland</option>
+                <option value="3">Luxemburg</option>
               </select>
             </div>
             <div class="col-md-4">
               <label for="invoerprovincie" class="form-label">Provincie</label>
-              <select id="invoerprovincie" class="form-select">
+              <select id="invoerprovincie" class="form-select" autocomplete="off">
                 <option selected>Kies een provincie</option>
-                <option>...</option>
+                <option id="defaultoption">Selecteer eerst een land</option>
               </select>
             </div>
             <div class="col-md-2">
@@ -176,9 +178,7 @@
                   name="flexRadioDefault"
                   id="paypal"
                 />
-                <label class="form-check-label" for="paypal">
-                  PayPal
-                </label>
+                <label class="form-check-label" for="paypal"> PayPal </label>
               </div>
             </div>
           </div>
@@ -193,15 +193,14 @@
           </button>
         </div>
         <!-- errors -->
-        <div id="kolom2">
-          
-        </div>
+        <div id="kolom2"></div>
       </div>
     </div>
 
     <script>
       //knop declaratie
       const button = document.querySelector("#buttonwand");
+      const landInvoer = document.querySelector("#invoerland");
 
       const divForms = document.querySelector("#kolom1");
       const divMessage = document.querySelector("#kolom2");
@@ -221,8 +220,8 @@
           paragraaf.id = "errors";
           errorDiv.appendChild(paragraaf);
 
-          errorArray.forEach((element) => {
-            let foutboodschap = document.createTextNode(element);
+          errorArray.forEach((fout) => {
+            let foutboodschap = document.createTextNode(fout);
             let volgendelijn = document.createElement("br");
 
             paragraaf.appendChild(foutboodschap);
@@ -235,14 +234,43 @@
       };
 
       //event listereners
+      //buttonclick
       button.addEventListener("click", validateForm, false);
+      //land invoer
+      landInvoer.addEventListener(
+        "change",
+        () => {
+          let landselectedValue = landInvoer.options[landInvoer.selectedIndex].text
+          let provincieInvoer = document.querySelector("#invoerprovincie")
+          let provincies = maakProvincieArray(landselectedValue);
+          
+          console.log(provincies)
+
+          //hier nog aanpassen clearen
+          provincieInvoer.innerHTML = "";
+
+          provincies.forEach((provincie) => {
+            let optionEl = document.createElement("option");
+            let provincieNode = document.createTextNode(provincie);
+
+            if (provincie == provincies[0])
+              optionEl.setAttribute("selected", true);
+
+            provincieInvoer.appendChild(optionEl);
+
+            optionEl.appendChild(provincieNode);
+          });
+        },
+        false
+      );
 
       //normale functies
       function checkEmptyField(veld, melding) {
         if (
           veld.value == "" ||
           veld.value == "Kies een land" ||
-          veld.value == "Kies een provincie"
+          veld.value == "Kies een provincie" ||
+          veld.value == "Selecteer eerst een land"
         ) {
           errorArray.push(melding);
         }
@@ -262,8 +290,8 @@
         checkEmptyField(naam, "Het veld naam is vereist.");
         checkEmptyField(gebruikersnaam, "Het veld gebruikersnaam is vereist.");
         checkEmptyField(email, "Het veld email is vereist.");
-        if(!validateEmail(email.value)){
-          errorArray.push("E-mailadres is niet correct.")
+        if (!validateEmail(email.value)) {
+          errorArray.push("E-mailadres is niet correct.");
         }
         checkEmptyField(wachtwoord, "Het veld wachtwoord is vereist.");
         checkEmptyField(
@@ -298,45 +326,30 @@
           case "success":
             titelNode = document.createTextNode("Goed gedaan!");
             paragraaf = document.createElement("p");
-            pcontent = document.createTextNode("Aww yeah, je werd geregistreerd.")
+            pcontent = document.createTextNode(
+              "Aww yeah, je werd geregistreerd."
+            );
             newDiv.appendChild(hoofding);
             newDiv.appendChild(paragraaf);
             ouder.appendChild(newDiv);
-            hoofding.appendChild(titelNode);      
+            hoofding.appendChild(titelNode);
             paragraaf.appendChild(pcontent);
             break;
           case "primary":
             titelNode = document.createTextNode("Betalingswijze");
             paragraaf = document.createElement("p");
-            pcontent = document.createTextNode("Je betalingswijze is " + checkRadio())
+            pcontent = document.createTextNode(
+              "Je betalingswijze is " + checkRadio()
+            );
             newDiv.appendChild(hoofding);
             newDiv.appendChild(paragraaf);
             ouder.appendChild(newDiv);
-            hoofding.appendChild(titelNode);      
+            hoofding.appendChild(titelNode);
             paragraaf.appendChild(pcontent);
             break;
           default:
             alert("geen geldige waarde voor alert type");
         }
-
-        // titelNode = document.createTextNode(titel);
-        // newDiv.appendChild(hoofding);
-        // ouder.appendChild(newDiv);
-        // hoofding.appendChild(titelNode);
-
-        // switch (alertType) {
-        //   case "danger":
-        //     titel = "Yikes, errors...";
-        //     break;
-        //   case "success":
-        //     titel = "Goed gedaan!";
-        //     break;
-        //   case "primary":
-        //     titel = "Betalingswijze";
-        //     break;
-        //   default:
-        //     alert("geen geldige waarde voor alert type");
-        // }
 
         return newDiv;
       }
@@ -356,107 +369,164 @@
           );
         }
       }
-      function checkRadio(){
+      function checkRadio() {
         let bankingapp = document.getElementById("bankingapp");
         let overschrijving = document.getElementById("overschrijving");
         let visakaart = document.getElementById("visakaart");
         let paypal = document.getElementById("paypal");
 
-        if(paypal.checked){
+        if (paypal.checked) {
           return "Paypal";
         }
-        if(bankingapp.checked){
+        if (bankingapp.checked) {
           return "Banking app";
         }
-        if(overschrijving.checked){
+        if (overschrijving.checked) {
           return "Overschrijving";
         }
-        if(visakaart.checked){
+        if (visakaart.checked) {
           return "Visakaart";
         }
 
         //bron https://www.tutorialspoint.com/how-to-check-whether-a-radio-button-is-selected-with-javascript
       }
-      function checkVoorwaarden(){
-        let voorwaarden = document.querySelector("#algemenevwcheck")
-        
-        if(voorwaarden)
-        voorwaarden.checked ? true : errorArray.push("Je moet de algemene voorwaarden accepteren.")
+      function checkVoorwaarden() {
+        let voorwaarden = document.querySelector("#algemenevwcheck");
+
+        if (voorwaarden)
+          voorwaarden.checked
+            ? true
+            : errorArray.push("Je moet de algemene voorwaarden accepteren.");
       }
-      function validateEmail(email){
-        const alfanummeral = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-        const allowedGebruikersnaam = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-"
-        const allowedDomeinnaam = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-"
-        let controle = 0; 
+      function validateEmail(email) {
+        const alfanummeral =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const allowedGebruikersnaam =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
+        const allowedDomeinnaam =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-";
+        let controle = 0;
         let ok = false;
-        
-        if(email.indexOf("@") == -1)
-            return false;
-        
+
+        if (email.indexOf("@") == -1) return false;
+
         let delen = email.split("@");
         let gebruikersnaam = delen[0];
         let domeinnaam = delen[1];
 
         //controleert of gebruikersnaam minstens 1 character lang is.
-        if(gebruikersnaam.length == 0)
-          return false;
+        if (gebruikersnaam.length == 0) return false;
         //controleert of gebruikersnaam begint met punt of koppelteken
-        if(gebruikersnaam.startsWith(".") || gebruikersnaam.startsWith("-"))
+        if (gebruikersnaam.startsWith(".") || gebruikersnaam.startsWith("-"))
           return false;
-        
+
         //controleert of domeinnaam aanwezig is (niet gevraagd)
-        if(domeinnaam.length == 0)
-          return false;
+        if (domeinnaam.length == 0) return false;
         //controleert of gebruikersnaam bestaat uit toegelaten karakters
         for (let i = 0; i < gebruikersnaam.length; i++) {
           for (let j = 0; j < allowedGebruikersnaam.length; j++) {
-            if(gebruikersnaam[i] == allowedGebruikersnaam[j]){
-              controle ++;
-            }             
-         
-          }        
-                    
+            if (gebruikersnaam[i] == allowedGebruikersnaam[j]) {
+              controle++;
+            }
+          }
         }
-        if(gebruikersnaam.length != controle)
-          return false;
+        if (gebruikersnaam.length != controle) return false;
         //controleert of domeinnaam bestaat uit toegelaten karakters
         controle = 0;
         for (let i = 0; i < domeinnaam.length; i++) {
           for (let j = 0; j < allowedDomeinnaam.length; j++) {
-            if(domeinnaam[i] == allowedDomeinnaam[j]){
-              controle ++;
-            }             
-         
-          }        
-                    
+            if (domeinnaam[i] == allowedDomeinnaam[j]) {
+              controle++;
+            }
+          }
         }
-        if(domeinnaam.length != controle)
-          return false;
+        if (domeinnaam.length != controle) return false;
         //controleert of domeinnaam begint met een alfanumeriek karakter
         for (let index = 0; index < alfanummeral.length; index++) {
-            if(domeinnaam[0] == alfanummeral[index]){
-              ok = true;
-            }
-          
-        }        
-        if(!ok)
-          return false;
+          if (domeinnaam[0] == alfanummeral[index]) {
+            ok = true;
+          }
+        }
+        if (!ok) return false;
         //controleert of er maar maximaal 1 punt aanwezig is in domeinnaam.
-        if(domeinnaam.includes(".")){
+        if (domeinnaam.includes(".")) {
           let puntSplits = domeinnaam.split(".");
           let puntAantal = dotsplits.length - 1;
 
-          if(puntAantal > 1){
+          if (puntAantal > 1) {
             return false;
           }
-
-        }     
-        //als alle controles gebeurd zijn en de code nog loopt geeft de functie true        
+        }
+        //als alle controles gebeurd zijn en de code nog loopt geeft de functie true
         return true;
         //bronnen
         //https://www.w3schools.com/jsref/jsref_obj_string.asp
         //https://www.aspsnippets.com/Articles/Email-validation-without-using-Regular-Expression-in-JavaScript.aspx
       }
-   </script>
+
+      function maakProvincieArray(land) {
+        let kantonsLux = [
+          "Kies een provincie",
+          "Capellen",
+          "Clervaux",
+          "Diekrich",
+          "Echternach",
+          "Esch-sur-Alzette",
+          "Grevenmacher",
+          "Luxemburg",
+          "Mersch",
+          "Redange",
+          "Remich",
+          "Vianden",
+          "Wiltz",
+        ];
+        let provinciesBelg = [
+          "Kies een provincie",
+          "Antwerpen",
+          "Limburg",
+          "Oost-Vlaanderen",
+          "Vlaams-Brabant",
+          "West-Vlaanderen",
+          "Henegouwen",
+          "Luik",
+          "Luxemburg",
+          "Namen",
+          "Waals-Brabant",
+        ];
+        let provinciesNed = [
+          "Kies een provincie",
+          "Groningen",
+          "Friesland",
+          "Drenthe",
+          "Overijssel",
+          "Flevoland",
+          "Gelderland",
+          "Utrecht",
+          "Noord-Holland",
+          "Zuid-Holland",
+          "Zeeland",
+          "Noord-Brabant",
+          "Limburg",
+        ];
+
+        let geenLand = ["Kies een provincie", "Selecteer eerst een land"];
+
+        if ((land == "België")) {
+          return provinciesBelg;
+        }
+
+        if ((land == "Nederland")) {
+          return provinciesNed;
+        }
+
+        if ((land == "Luxemburg")) {
+          return kantonsLux;
+        }
+
+        if ((land == "Kies een land")) {
+          return geenLand;
+        }
+      }
+    </script>
   </body>
 </html>
